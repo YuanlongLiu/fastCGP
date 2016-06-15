@@ -1,0 +1,113 @@
+	##fastCGP 
+	##by Yuanlong lIU, 22-07-2015
+	rm(list=ls())
+	library(evaluate)
+	notUse = evaluate(file(  "/ext/methodo/10.DMGWAS/asthma/0.Scripts/Scripts_yliu/meta_scripts/header_fun.R"  ),stop_on_error=0, new_device=FALSE, keep_message=FALSE, keep_warning=FALSE )
+
+	options(stringsAsFactors=FALSE)
+	classes <- rep('character',3)
+	snps_p_chrom = read.table(complete_snp_position_file, colClass=classes, stringsAsFactors=FALSE, header=TRUE)
+
+	genewise_p_kinfo <- function( gene.map, snps_p_chrom ) ##snps_pos_p: complete snp info, including chrom, pos, and P
+	{
+
+		genes = unique( gene.map$Gene )
+		snps = unique( snps_p_chrom$SNP ) ##the complete snp list, unique can be omitted
+		snps.gene  = unique( gene.map$SNP ) ##snps in genes
+		snps.gene_belong_snps = setdiff( snps.gene, snps ) 
+		if( length(snps.gene_belong_snps)>0 ) { cat('some snps have no pos:', snps.gene_belong_snps, '\n'); return }
+		
+		genes.count = length(genes) ##19121
+		snps.count = length(snps) ##526733
+		snps.gene.count = length(snps.gene) ##235446
+
+		snps.p.temp = unique( snps_p_chrom[,c('SNP', 'P')] )
+		snps.p = snps.p.temp$P
+		names(snps.p) = snps.p.temp$SNP ##named p values for complete SNP list
+		
+		snps.pos.table = 1:snps.count
+		names(snps.pos.table) = snps_p_chrom[ order(snps_p_chrom$chrom, snps_p_chrom$position), ]$SNP ##put snps at right position on the table according to chrom position
+		
+		snps.prk = rank( snps.p, ties.method='random') ##p value rank of snps
+		
+		table.rk = snps.prk[ names(snps.pos.table ) ] ##rank of the snps on the table; rank(c(1,2)): 1 2
+		
+		gene.snps.poses = as.list( tapply( snps.pos.table[ gene.map$SNP ] ,gene.map$Gene, function(v) {return(v)} ) ) ##position of snps on table of gene
+		
+		if(any(is.na(unlist(gene.snps.poses, recursive=TRUE)))) {cat( 'NA information from SNP table again!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' ); return(0)}
+			
+		fre = as.list(table( gene.map$Gene )[1:genes.count]) ##number of snps in each gene
+		gene.minrk = as.list(tapply( snps.prk[ gene.map$SNP ] ,gene.map$Gene, min ))##best rank of each gene
+		
+		return( list(gene.snps.poses=gene.snps.poses, gene.fre = fre, gene.minrk=gene.minrk, table.rk=table.rk) )	
+	}
+
+	genewise_p <- function( inputGeneList )
+	{
+		x = kinfo$gene.minrk[inputGeneList]
+		if(!all(x==cummin(x))) { cat('ERRRRROOOOOOOR'); return('ERRRRROOOOOOOR') } ##check whether genes are ranked from worst to best
+		table.len = length( kinfo$table.rk ) ##total number of SNPs on the circular
+		pos2compare = cbind(rk=unname(kinfo$table.rk), pos=1:table.len)
+		gene_lens = sapply(kinfo$gene.snps.poses[inputGeneList], length)
+		sig_pos_ini = pos2compare
+		i=1
+		for(gene in inputGeneList)
+		{
+			gene.len = gene_lens[gene]
+			
+			thresh = kinfo$gene.minrk[ gene ] ##Test statistics // kinfo$gene.minrk['GSDMB']: 1
+			sig.pos = sig_pos_ini[which(sig_pos_ini[,'rk'] <= thresh), 'pos' ] ## CONFRIMED
+			if(length(sig.pos) ==1) { genes_p[[gene]]= ( gene.len + 1 )/( table.len + 1 ); next}  ##only extreme cases, that the best snp in table is mapped to a gene 
+			gaps = c( diff( sig.pos )-1, (table.len-sig.pos[length(sig.pos)]) + (sig.pos[1]-1) ) ##CONFRIMED
+			
+			big.gaps = gaps[gaps >= gene.len]
+			bin.width = big.gaps - gene.len + 1 ##CONFRIMED
+			genes_p[[gene]]  = 1 - sum(bin.width) / ( table.len + 1)  ## 
+			if( i %% 100 ==0) cat(i, '|')
+			sig_pos_ini = pos2compare[ sig.pos, ]
+			i=i+1
+		}
+		return( genes_p )
+	}
+
+
+	group = 1
+
+	ver_names = c('imputed_meta_g1', 'imputed_meta_g2')[ group ]
+	d_names = c('00k', '20k')[1]
+
+	load( gene_map_file[ ver_names, d_names] )
+	
+	assoc = read.table( assoc_files['imputed_meta'], header=TRUE, stringsAsFactors=FALSE, comment.char='' )
+	assoc = assoc[,c(3, group)]
+	colnames(assoc) = c('SNP', 'P')
+	
+	snps_p_chrom = subset( snps_p_chrom, chrom!='.' )
+	snps_p_chrom = subset( snps_p_chrom, SNP %in% assoc[, 'SNP'] )
+	
+	snps_p_chrom$chrom = as.numeric(snps_p_chrom$chrom)
+	snps_p_chrom$position = as.numeric(snps_p_chrom$position)
+
+	pvalue = assoc[,'P']; 
+	
+	names(pvalue) = assoc[,'SNP']
+	snps_p_chrom$P = pvalue[ snps_p_chrom[, 'SNP'] ]
+	snps_p_chrom = subset( snps_p_chrom, !is.na( snps_p_chrom$P ) )
+	len = nrow(snps_p_chrom)
+
+	kinfo = genewise_p_kinfo( gene.map, snps_p_chrom )
+	genes_p =list()
+	geneList = names(sort(unlist(kinfo$gene.minrk),decreasing=TRUE)) 	
+	
+	is.consective = lapply( geneList, function(v) { gene.poses = kinfo$gene.snps.poses[[v]]; gene.len = length(gene.poses);	is.consective = max(gene.poses)-min(gene.poses)+1-gene.len; return( is.consective ) })
+	nonConsecGeneList = geneList[ unlist( is.consective )!=0 ] ##7  "TRNAC-GCA" "IKZF1"     "SH3RF3"    "TRNAV-AAC" "INPP5D"    "PRG2"      "DPP6"
+	consecGeneList = setdiff( geneList, nonConsecGeneList )
+	
+	time = proc.time()
+	result = genewise_p( geneList ) ##treat all genes as con
+	proc.time() - time
+	
+	
+	# save(result, file=gene2weight_pcir_file[ ver_names, d_names])
+	
+	
