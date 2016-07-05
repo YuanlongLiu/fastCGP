@@ -1,5 +1,7 @@
 	##fastCGP 
 	##by Yuanlong lIU, 22-07-2015
+	##code comments will be added
+	
 	rm(list=ls())
 	library(evaluate)
 	notUse = evaluate(file(  "/ext/methodo/10.DMGWAS/asthma/0.Scripts/Scripts_yliu/meta_scripts/header_fun.R"  ),stop_on_error=0, new_device=FALSE, keep_message=FALSE, keep_warning=FALSE )
