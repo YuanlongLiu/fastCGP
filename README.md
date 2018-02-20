@@ -49,12 +49,12 @@ An example:
 	TCF19
 	...
  
-Given these input, run the following code to perform compute gene p-values:
+Given these files, run the following code to compute gene p-values:
 ```
 results = fastCGP( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )
 ```
 
-The computed results will be saved in ```results``` as a data frame, and will be saved in the ```computed_gene_p_values.tab``` file in your working directory.
+The results will be saved in ```results``` as a data frame, and will be saved in the ```computed_gene_p_values.tab``` file in your working directory.
 
 ## Contact information
 
