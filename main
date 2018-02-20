@@ -1,115 +1,119 @@
-	##fastCGP 
-	##by Yuanlong lIU, 22-07-2015
-	##code comments will be added
+	##  fastCGP: an efficient and exact method to compute gene-level P-values from GWAS SNP-level results
+	##  Developed by Yuanlong LIU, contact: yuanlong.liu@inserm.fr
+	##  Latest update: 26-07-2017
+	##	If you this method, please cite in your publication: Liu, Y., et al. "Network-assisted analysis of GWAS data identifies a functionally-relevant gene module for childhood-onset asthma." Scientific Reports 7.1 (2017): 938.
 	
-	rm(list=ls())
-	library(evaluate)
-	notUse = evaluate(file(  "/ext/methodo/10.DMGWAS/asthma/0.Scripts/Scripts_yliu/meta_scripts/header_fun.R"  ),stop_on_error=0, new_device=FALSE, keep_message=FALSE, keep_warning=FALSE )
-
-	options(stringsAsFactors=FALSE)
-	classes <- rep('character',3)
-	snps_p_chrom = read.table(complete_snp_position_file, colClass=classes, stringsAsFactors=FALSE, header=TRUE)
-
-	genewise_p_kinfo <- function( gene.map, snps_p_chrom ) ##snps_pos_p: complete snp info, including chrom, pos, and P
+	##	this sub-function constructs the 'circle' to perform fastCGP, which includes information of ordered snp p-values, and their associated genes 
+	fastCGP_cir_info <- function( snp2gene, snp_chr_pos_p )
 	{
 
-		genes = unique( gene.map$Gene )
-		snps = unique( snps_p_chrom$SNP ) ##the complete snp list, unique can be omitted
-		snps.gene  = unique( gene.map$SNP ) ##snps in genes
-		snps.gene_belong_snps = setdiff( snps.gene, snps ) 
-		if( length(snps.gene_belong_snps)>0 ) { cat('some snps have no pos:', snps.gene_belong_snps, '\n'); return }
+		genes = unique( snp2gene$gene )
+		mapped_snp  = unique( snp2gene$SNP ) ##snps in genes
+		all_snps = unique( snp_chr_pos_p$SNP ) ##the complete snp list
+		if( any(duplicated( all_snps )) ) stop('\nSome SNPs appear more than once in your snp_chr_pos_p file\nPlease remove duplicates first')
 		
-		genes.count = length(genes) ##19121
-		snps.count = length(snps) ##526733
-		snps.gene.count = length(snps.gene) ##235446
+		mapped_snp_nin_all_snps = setdiff( mapped_snp, all_snps )
+		diff_len = length(mapped_snp_nin_all_snps) ##SNPs mapped to gene but do not have a position in snp_chr_pos_p file
+		if( diff_len > 0 ) stop('\n', len, ' SNPs are mapped to genes in your snp2gene file \nBut their chromosomal or p-value information are missed in your snp_chr_pos_p file')
 
-		snps.p.temp = unique( snps_p_chrom[,c('SNP', 'P')] )
-		snps.p = snps.p.temp$P
-		names(snps.p) = snps.p.temp$SNP ##named p values for complete SNP list
+		genes_count = length(genes)
+		snps_count = length(all_snps)
+		mapped_snp_count = length(mapped_snp)
+		cat('\nNumber of genes in your snp2gene file:', genes_count, '\n')
+		cat('Number of SNPs in your snp_chr_pos_p file:', snps_count, '\n')
+		cat('Number of SNPs mapped to genes:', mapped_snp_count, '\n')
 		
-		snps.pos.table = 1:snps.count
-		names(snps.pos.table) = snps_p_chrom[ order(snps_p_chrom$chrom, snps_p_chrom$position), ]$SNP ##put snps at right position on the table according to chrom position
+		snps_p = snp_chr_pos_p$p
+		names( snps_p ) = snp_chr_pos_p$SNP ##named p values for complete SNP list
 		
-		snps.prk = rank( snps.p, ties.method='random') ##p value rank of snps
+		snp_prk = rank( snps_p, ties.method='random' ) ##p value rank of snps
+
+		snps_pos_table = 1:snps_count
+		names(snps_pos_table) = snp_chr_pos_p[ order(snp_chr_pos_p$chr, snp_chr_pos_p$pos), ]$SNP ##place snps on the table according to their position on the chrosome
 		
-		table.rk = snps.prk[ names(snps.pos.table ) ] ##rank of the snps on the table; rank(c(1,2)): 1 2
+		table_rk = snp_prk[ names(snps_pos_table) ] ##rank of the snps on the table; rank(c(1,2)): 1 2
 		
-		gene.snps.poses = as.list( tapply( snps.pos.table[ gene.map$SNP ] ,gene.map$Gene, function(v) {return(v)} ) ) ##position of snps on table of gene
+		gene_snps_poses = tapply( snps_pos_table[ snp2gene$SNP ], snp2gene$gene, function(v) {return(v)} ) ##position of snps on table of gene
 		
-		if(any(is.na(unlist(gene.snps.poses, recursive=TRUE)))) {cat( 'NA information from SNP table again!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' ); return(0)}
-			
-		fre = as.list(table( gene.map$Gene )[1:genes.count]) ##number of snps in each gene
-		gene.minrk = as.list(tapply( snps.prk[ gene.map$SNP ] ,gene.map$Gene, min ))##best rank of each gene
+		if(any(is.na(unlist(gene_snps_poses, recursive=TRUE)))) {cat( 'NA information from SNP table again!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!' ); return(0)}
+	
+		lens = table( snp2gene$gene )[1:genes_count] ##number of snps in each gene
+		gene_minrk = as.list(tapply( snp_prk[ snp2gene$SNP ], snp2gene$gene, min ))##best rank of each gene
+
+		snp2gene_p = snp2gene; snp2gene_p$p = snps_p[ snp2gene$SNP ]
+		gene_minP = tapply(snp2gene_p$p, snp2gene_p$gene, min) ##best rank of each gene
 		
-		return( list(gene.snps.poses=gene.snps.poses, gene.fre = fre, gene.minrk=gene.minrk, table.rk=table.rk) )	
+		return( list(gene_snps_poses=gene_snps_poses, gene_lens = lens, gene_minrk=gene_minrk, gene_minP=gene_minP, table_rk=table_rk) )	
 	}
 
-	genewise_p <- function( inputGeneList )
+	fastCGP <- function( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )
 	{
-		x = kinfo$gene.minrk[inputGeneList]
-		if(!all(x==cummin(x))) { cat('ERRRRROOOOOOOR'); return('ERRRRROOOOOOOR') } ##check whether genes are ranked from worst to best
-		table.len = length( kinfo$table.rk ) ##total number of SNPs on the circular
-		pos2compare = cbind(rk=unname(kinfo$table.rk), pos=1:table.len)
-		gene_lens = sapply(kinfo$gene.snps.poses[inputGeneList], length)
-		sig_pos_ini = pos2compare
+		time_0 = proc.time()
+		
+		cat('\nNote: all gene names will be converted to uppercase\n')
+		
+		##read files:
+		snp2gene = read.table( snp2gene_file, header=TRUE, stringsAsFactors=FALSE, comment.char='' )
+		snp_chr_pos_p = read.table( snp_chr_pos_p_file, header=TRUE, stringsAsFactors=FALSE, comment.char='' )
+		
+		##lowercase to uppercase
+		snp2gene$gene = toupper( snp2gene$gene )
+		
+		genes = unique( snp2gene$gene )
+		if( missing(genes2compute_file) ) genes2compute = genes
+		else { genes2compute = read.table( genes2compute_file, header=TRUE, stringsAsFactors=FALSE, comment.char='' )
+		genes2compute = unique( toupper( genes2compute$gene ) ) }
+		
+		unmapped_genes = setdiff( genes2compute, genes )
+		if( length( unmapped_genes ) > 0 ) cat( sep='', '\n', length( unmapped_genes ), ' genes in your genes2compute file do not have SNP_to_gene mapping information\nThey are removed for downstream computation\n' )
+		
+		cir_info = fastCGP_cir_info( snp2gene, snp_chr_pos_p )
+
+		sorted_genes = names(sort(unlist(cir_info$gene_minrk), decreasing=TRUE))
+		genes2compute = intersect( sorted_genes, genes2compute ) ##ordered according to sorted_genes
+		
+		x = cir_info$gene_minrk[genes2compute]
+		if(!all(x==cummin(x))) stop('\nThe genes to be computed need to be ranked by minP') ##check whether genes are ranked by minP; this is required for the purpose of increasing efficiency
+		table_len = length( cir_info$table_rk ) ##total number of SNPs on the circle
+		pos2compare = cbind(rk=unname(cir_info$table_rk), pos=1:table_len)
+		sig_pos_ini = pos2compare ## the rank at each position
+		gene_lens = cir_info$gene_lens[genes2compute]
+		
+		genes_p =list()
 		i=1
-		for(gene in inputGeneList)
+		
+		cat('\n\n\n\n@@@@-------------------------------- COMPUTATION BEGINS --------------------------------@@@@\n')
+		cat('\n\nNumber of genes already computed:\n')
+		##compute corrected gene-level p-value gene by gene
+		for(gene in genes2compute)
 		{
-			gene.len = gene_lens[gene]
+			gene_len = gene_lens[gene]
 			
-			thresh = kinfo$gene.minrk[ gene ] ##Test statistics // kinfo$gene.minrk['GSDMB']: 1
-			sig.pos = sig_pos_ini[which(sig_pos_ini[,'rk'] <= thresh), 'pos' ] ## CONFRIMED
-			if(length(sig.pos) ==1) { genes_p[[gene]]= ( gene.len + 1 )/( table.len + 1 ); next}  ##only extreme cases, that the best snp in table is mapped to a gene 
-			gaps = c( diff( sig.pos )-1, (table.len-sig.pos[length(sig.pos)]) + (sig.pos[1]-1) ) ##CONFRIMED
+			if( gene_len == 1 ) { genes_p[[ gene ]] = cir_info$gene_minP[ gene ]; next } ##if the gene only contains one SNP, the p-value will be that SNP p-value
 			
-			big.gaps = gaps[gaps >= gene.len]
-			bin.width = big.gaps - gene.len + 1 ##CONFRIMED
-			genes_p[[gene]]  = 1 - sum(bin.width) / ( table.len + 1)  ## 
+			thresh = cir_info$gene_minrk[ gene ] ##Test statistics //
+			sig_pos = sig_pos_ini[which(sig_pos_ini[,'rk'] <= thresh), 'pos' ] ## CONFRIMED
+			if(length(sig_pos) ==1) { genes_p[[gene]]= ( gene_len + 1 )/( table_len + 1 ); next}  ##only extreme cases, that a gene contains the best snp in all_snps 
+			gaps = c( diff( sig_pos ) - 1, (table_len - sig_pos[length(sig_pos)]) + (sig_pos[1] - 1) ) ##CONFRIMED
+			
+			big_gaps = gaps[gaps >= gene_len]
+			gap_width = big_gaps - gene_len + 1 ##CONFRIMED
+			genes_p[[gene]]  = 1 - sum(gap_width) / ( table_len + 1)
+			
 			if( i %% 100 ==0) cat(i, '|')
-			sig_pos_ini = pos2compare[ sig.pos, ]
+			sig_pos_ini = pos2compare[ sig_pos, ] ##because genes are ranked according to minP
 			i=i+1
 		}
-		return( genes_p )
+		cat('\n\n\n\n@@@@--------------------------------- COMPUTATION ENDS ---------------------------------@@@@\n')
+
+		delta_time = proc.time() - time_0
+		minutes = format( round( delta_time[3] / 60, 1), nsmall=1)
+		cat('\n\nTotal computational time:', minutes, 'minutes', '\n')	
+		
+		genes_p_frame = data.frame( gene=names( genes_p ), p=unname(unlist( genes_p )) )
+		write.table(genes_p_frame, file='./computed_gene_p_values.tab', row.names=FALSE, sep='\t', quote=FALSE)
+		
+		return( genes_p_frame )
 	}
 
 
-	group = 1
-
-	ver_names = c('imputed_meta_g1', 'imputed_meta_g2')[ group ]
-	d_names = c('00k', '20k')[1]
-
-	load( gene_map_file[ ver_names, d_names] )
-	
-	assoc = read.table( assoc_files['imputed_meta'], header=TRUE, stringsAsFactors=FALSE, comment.char='' )
-	assoc = assoc[,c(3, group)]
-	colnames(assoc) = c('SNP', 'P')
-	
-	snps_p_chrom = subset( snps_p_chrom, chrom!='.' )
-	snps_p_chrom = subset( snps_p_chrom, SNP %in% assoc[, 'SNP'] )
-	
-	snps_p_chrom$chrom = as.numeric(snps_p_chrom$chrom)
-	snps_p_chrom$position = as.numeric(snps_p_chrom$position)
-
-	pvalue = assoc[,'P']; 
-	
-	names(pvalue) = assoc[,'SNP']
-	snps_p_chrom$P = pvalue[ snps_p_chrom[, 'SNP'] ]
-	snps_p_chrom = subset( snps_p_chrom, !is.na( snps_p_chrom$P ) )
-	len = nrow(snps_p_chrom)
-
-	kinfo = genewise_p_kinfo( gene.map, snps_p_chrom )
-	genes_p =list()
-	geneList = names(sort(unlist(kinfo$gene.minrk),decreasing=TRUE)) 	
-	
-	is.consective = lapply( geneList, function(v) { gene.poses = kinfo$gene.snps.poses[[v]]; gene.len = length(gene.poses);	is.consective = max(gene.poses)-min(gene.poses)+1-gene.len; return( is.consective ) })
-	nonConsecGeneList = geneList[ unlist( is.consective )!=0 ] ##7  "TRNAC-GCA" "IKZF1"     "SH3RF3"    "TRNAV-AAC" "INPP5D"    "PRG2"      "DPP6"
-	consecGeneList = setdiff( geneList, nonConsecGeneList )
-	
-	time = proc.time()
-	result = genewise_p( geneList ) ##treat all genes as con
-	proc.time() - time
-	
-	
-	# save(result, file=gene2weight_pcir_file[ ver_names, d_names])
-	
-	
