@@ -10,11 +10,13 @@ The implementation of this analytical approach brings several advantages. First,
 
 fastCGP is written in R. To perform the analysis, first load the R scripts into the R working environment. The main function ```fastCGP( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )``` requires three arguments:
 
-- ```snp2gene_file```: a tab-delimited two-column text file that contains information of which SNPs are mapped to which genes
+- ```snp2gene_file```: a tab-delimited two-column text file that contains information of which SNPs are mapped to which genes. An example:
 	
 For example,	
 
-	0.921	0.930
+	gene	SNP
+	KCNIP4	rs10000010
+	KIAA1530	rs10000012	
 	0.491,0.492
 	0.990,0.993
 	0.775,0.777
