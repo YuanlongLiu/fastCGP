@@ -10,7 +10,7 @@ The implementation of this analytical approach brings several advantages. First,
 
 fastCGP is written in R. To perform the analysis, first load the R scripts into the R working environment. The main function ```fastCGP( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )``` requires three inputs:
 
-- ```snp2gene_file```: a space-delimited two-column text file that contains information of which SNPs are mapped to which genes. The cloumn headers should be exactly ```gene	SNP```.
+- ```snp2gene_file```: a space-delimited two-column text file that contains information of which SNPs are mapped to which genes. The cloumn headers of this file should be exactly ```gene``` and ```SNP```.
 
 For example,	
 
