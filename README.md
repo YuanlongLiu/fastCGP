@@ -21,6 +21,27 @@ For example,
 	0.577,0.561
 
 The followings are shown at standard output.
+To calculate MID between two variables, type:
+
+	$ ./MID <input_file>
+	
+`<input_file>` is a comma-separated text file with two columns without row and column names.
+Columns correspond to respective variables.
+For example,	
+
+	0.921,0.930
+	0.491,0.492
+	0.990,0.993
+	0.775,0.777
+	...
+	0.577,0.561
+
+The followings are shown at standard output.
+
+* **dimX** (the information dimension of the first variable)
+* **dimY** (the information dimension of the second variable)
+* **dimXY** (the information dimension of X and Y)
+* **MID** (equivalent to dimX + dimY - dimXY)
 
 
 - ```snp2gene_file```: a tab-delimited four-column text le that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value.
