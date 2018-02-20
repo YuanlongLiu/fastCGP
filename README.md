@@ -24,6 +24,7 @@ An example format:
 	...
 
 - ```snp_chr_pos_p_file```: a space-delimited four-column text le that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value.
+
 An example format:	
 
 	gene SNP
