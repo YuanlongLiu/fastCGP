@@ -10,9 +10,9 @@ The implementation of this analytical approach brings several advantages. First,
 
 fastCGP is written in R. To perform the analysis, first load the R scripts into the R working environment. The main function ```fastCGP( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )``` requires three inputs:
 
-- ```snp2gene_file```: a space-delimited two-column text file that contains information of which SNPs are mapped to which genes. The cloumn headers of this file should be exactly ```gene``` and ```SNP``` (order insensitive).
+- ```snp2gene_file```: a space-delimited two-column text file that contains information of which SNPs are mapped to which genes. The column headers of this file should be exactly ```gene``` and ```SNP``` (order insensitive).
 
-An example format:	
+An example:	
 
 	gene SNP
 	KCNIP4 rs10000010
@@ -23,9 +23,9 @@ An example format:
 	STK32B rs10000062
 	...
 
-- ```snp_chr_pos_p_file```: a space-delimited four-column text le that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value. The cloumn headers of this file should be exactly ```SNP```, ```chr```, ```pos```, and ```p``` (order insensitive).
+- ```snp_chr_pos_p_file```: a space-delimited four-column text file that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value. The cloumn headers of this file should be exactly ```SNP```, ```chr```, ```pos```, and ```p``` (order insensitive).
 
-An example format:	
+An example:	
 
 	SNP chr pos p
 	rs1000000 12 126890980 0.394150
@@ -36,17 +36,18 @@ An example format:
 	rs1000002 3 183635768 0.305950
 	...
 
-- ```snp2gene_file```: a one-column text le that contains the list of genes which you want to compute their p-values. If this le is not provided, all genes included in the "snp2gene.tab" le (SNP2gene le) will be computed.
+- ```snp2gene_file```: a one-column text file that contains the list of genes which you want to compute their p-values. If this file is not provided, all genes included in the ```snp_chr_pos_p_file``` will be computed.
 
+An example:	
 
-```javascript
-{
-    "pref-labels": {
-        "poverty": {
-
-}
-
-```
+	gene
+	MICA
+	S1PR3
+	C6ORF15
+	HLA-DQA1
+	ZNF329
+	TCF19
+	...
  
 
 ## Contact information
