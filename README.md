@@ -8,7 +8,14 @@ The implementation of this analytical approach brings several advantages. First,
 
 ## Usage
 
-This is ```hh```
+fastCGP is written in R. To perform the analysis, first load the R scripts into the R working environment.
+
+The main function ```fastCGP( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )``` requires the arguments of ```snp2gene_file```, ```snp_chr_pos_p_file```, ```genes2compute_file```, where:
+
+- ```snp2gene_file```: URI of of th
+- ```snp2gene_file```: URI of of th
+- ```snp2gene_file```: URI of of th
+
 
 ```javascript
 {
