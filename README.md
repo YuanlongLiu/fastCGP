@@ -12,7 +12,7 @@ fastCGP is written in R. To perform the analysis, first load the R scripts into 
 
 - ```snp2gene_file```: a space-delimited two-column text file that contains information of which SNPs are mapped to which genes. The cloumn headers of this file should be exactly ```gene``` and ```SNP```.
 
-For example,	
+An example format:	
 
 	gene SNP
 	KCNIP4 rs10000010
@@ -23,7 +23,18 @@ For example,
 	STK32B rs10000062
 	...
 
-- ```snp2gene_file```: a tab-delimited four-column text le that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value.
+- ```snp_chr_pos_p_file```: a space-delimited four-column text le that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value.
+An example format:	
+
+	gene SNP
+	KCNIP4 rs10000010
+	KIAA1530 rs10000012
+	BMPR1B rs10000023
+	FAM114A1 rs10000037
+	STK32B rs10000042
+	STK32B rs10000062
+	...
+
 - ```snp2gene_file```: a one-column text le that contains the list of genes which you want to compute their p-values. If this le is not provided, all genes included in the "snp2gene.tab" le (SNP2gene le) will be computed.
 
 
