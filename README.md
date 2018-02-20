@@ -11,19 +11,6 @@ The implementation of this analytical approach brings several advantages. First,
 fastCGP is written in R. To perform the analysis, first load the R scripts into the R working environment. The main function ```fastCGP( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )``` requires three arguments:
 
 - ```snp2gene_file```: a tab-delimited two-column text file that contains information of which SNPs are mapped to which genes
-For example,	
-
-	0.921,0.930
-	0.491,0.492
-	0.990,0.993
-	0.775,0.777
-	...
-	0.577,0.561
-
-The followings are shown at standard output.
-To calculate MID between two variables, type:
-
-	$ ./MID <input_file>
 	
 `<input_file>` is a comma-separated text file with two columns without row and column names.
 Columns correspond to respective variables.
