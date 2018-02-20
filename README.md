@@ -14,14 +14,14 @@ fastCGP is written in R. To perform the analysis, first load the R scripts into 
 	
 For example,	
 
-	gene	SNP
-	KCNIP4	rs10000010
-	KIAA1530	rs10000012	
-	0.491,0.492
-	0.990,0.993
-	0.775,0.777
+	gene SNP
+	KCNIP4 rs10000010
+	KIAA1530 rs10000012
+	BMPR1B rs10000023
+	FAM114A1 rs10000037
+	STK32B rs10000042
+	STK32B rs10000062
 	...
-	0.577,0.561
 
 The followings are shown at standard output.
 
