@@ -27,13 +27,13 @@ An example format:
 
 An example format:	
 
-	gene SNP
-	KCNIP4 rs10000010
-	KIAA1530 rs10000012
-	BMPR1B rs10000023
-	FAM114A1 rs10000037
-	STK32B rs10000042
-	STK32B rs10000062
+	SNP chr pos p
+	rs1000000 12 126890980 0.394150
+	rs10000010 4 21618674 0.821190
+	rs10000012 4 1357325 0.623990
+	rs10000013 4 37225069 0.081821
+	rs10000017 4 84778125 0.211210
+	rs1000002 3 183635768 0.305950
 	...
 
 - ```snp2gene_file```: a one-column text le that contains the list of genes which you want to compute their p-values. If this le is not provided, all genes included in the "snp2gene.tab" le (SNP2gene le) will be computed.
