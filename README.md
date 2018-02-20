@@ -16,7 +16,7 @@ fastCGP is written in R. To perform the analysis, first load the R scripts into 
 Columns correspond to respective variables.
 For example,	
 
-	0.921,0.930
+	0.921	0.930
 	0.491,0.492
 	0.990,0.993
 	0.775,0.777
