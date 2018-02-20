@@ -10,7 +10,7 @@ The implementation of this analytical approach brings several advantages. First,
 
 fastCGP is written in R. To perform the analysis, first load the R scripts into the R working environment. fastCGP requires three inputs:
 
-- ```snp2gene_file```: a space-delimited two-column text file that contains information of which SNPs are mapped to which genes. The column headers of this file should be exactly ```gene``` and ```SNP``` (order insensitive).
+- ```snp2gene_file```: (the path of) a space-delimited two-column text file that contains information of which SNPs are mapped to which genes. The column headers of this file should be exactly ```gene``` and ```SNP``` (order insensitive).
 
 An example:	
 
@@ -23,7 +23,7 @@ An example:
 	STK32B rs10000062
 	...
 
-- ```snp_chr_pos_p_file```: a space-delimited four-column text file that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value. The cloumn headers of this file should be exactly ```SNP```, ```chr```, ```pos```, and ```p``` (order insensitive).
+- ```snp_chr_pos_p_file```: (the path of) a space-delimited four-column text file that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value. The column headers of this file should be exactly ```SNP```, ```chr```, ```pos```, and ```p``` (order insensitive).
 
 An example:	
 
@@ -36,7 +36,7 @@ An example:
 	rs1000002 3 183635768 0.305950
 	...
 
-- ```snp2gene_file``` (optional): a one-column text file that contains the list of genes which you want to compute their p-values. If this file is not provided, all genes included in the ```snp_chr_pos_p_file``` will be computed.
+- ```genes2compute_file``` (optional): (the path of) a one-column text file that contains the list of genes which you want to compute their p-values. The column header of this file should be exactly ```gene```. If this file is not provided, all genes included in the ```snp_chr_pos_p_file``` will be computed.
 
 An example:	
 
@@ -49,14 +49,14 @@ An example:
 	TCF19
 	...
  
-Given these input, run the following code to perform the analysis:
+Given these input, run the following code to perform compute gene p-values:
 ```
-hello
+results = fastCGP( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )
 ```
 
+The computed results will be saved in ```results``` as a data frame, and will be saved in the ```computed_gene_p_values.tab``` file in your working directory.
 
 ## Contact information
-Usage and examples will be added soon
 
 * Author: Yuanlong LIU
 * Affiliation: French National Institute of Health and Medical Research, Unit 946,  Paris, France
