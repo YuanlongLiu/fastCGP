@@ -8,6 +8,20 @@ The implementation of this analytical approach brings several advantages. First,
 
 ## Usage
 Usage and examples will be added soon
+Plain tagging without stemming
+------------------------------
+
+	 curl -H "Accept: application/json" "http://localhost:8080/scones/tag/concept/plain" -d "Poverty is widespread around the World..."
+
+```javascript
+{
+    "pref-labels": {
+        "poverty": {
+
+}
+
+```
+
 
 ## Contact information
 Usage and examples will be added soon
