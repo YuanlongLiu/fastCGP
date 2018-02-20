@@ -25,11 +25,6 @@ For example,
 
 The followings are shown at standard output.
 
-* **dimX** (the information dimension of the first variable)
-* **dimY** (the information dimension of the second variable)
-* **dimXY** (the information dimension of X and Y)
-* **MID** (equivalent to dimX + dimY - dimXY)
-
 
 - ```snp2gene_file```: a tab-delimited four-column text le that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value.
 - ```snp2gene_file```: a one-column text le that contains the list of genes which you want to compute their p-values. If this le is not provided, all genes included in the "snp2gene.tab" le (SNP2gene le) will be computed.
