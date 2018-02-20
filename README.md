@@ -11,13 +11,16 @@ The implementation of this analytical approach brings several advantages. First,
 fastCGP is written in R. To perform the analysis, first load the R scripts into the R working environment. The main function ```fastCGP( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )``` requires three arguments:
 
 - ```snp2gene_file```: a tab-delimited two-column text file that contains information of which SNPs are mapped to which genes
-a	b
-a	b
-a	b
-| Command | Description |
-| --- | --- |
-| git status | List all new or modified files |
-| git diff | Show file differences that haven't been staged |
+For example,	
+
+	0.921   0.930
+	0.491   0.492
+	0.990   0.993
+	0.775,0.777
+	...
+	0.577,0.561
+
+The followings are shown at standard output.
 
 - ```snp2gene_file```: a tab-delimited four-column text le that contains the information of all SNPs that are analyzed in a GWAS, including the name of a SNP, its chromosomal number, position on the chromosome, and GWAS association p-value.
 - ```snp2gene_file```: a one-column text le that contains the list of genes which you want to compute their p-values. If this le is not provided, all genes included in the "snp2gene.tab" le (SNP2gene le) will be computed.
