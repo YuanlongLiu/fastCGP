@@ -12,7 +12,7 @@ fastCGP is written in R. To perform the analysis, first load the R scripts into 
 
 - ```snp2gene_file```: a space-delimited two-column text file that contains information of which SNPs are mapped to which genes. The cloumn headers should be exactly ```gene	SNP``` 
 
-	
+For example,	
 
 	gene SNP
 	KCNIP4 rs10000010
