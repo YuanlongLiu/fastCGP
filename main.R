@@ -108,7 +108,7 @@
 
 		delta_time = proc.time() - time_0
 		minutes = format( round( delta_time[3] / 60, 1), nsmall=1)
-		cat('\n\nTotal computational time:', minutes, 'minutes', '\n') ## output the computational time
+		cat('\n\nTotal computational time:', minutes, 'minutes', '\n') ## output the computational time. Added this comment to see changes in git
 		
 		genes_p_frame = data.frame( gene=names( genes_p ), p=unname(unlist( genes_p )) )
 		write.table(genes_p_frame, file='./computed_gene_p_values.tab', row.names=FALSE, sep='\t', quote=FALSE)
