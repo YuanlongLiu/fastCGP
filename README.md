@@ -6,17 +6,12 @@ Here, we took advantage of the CGP strategy and proposed a novel method named fa
 
 The implementation of this analytical approach brings several advantages. First, the method is exact, hence does not suffer from randomness compared to many simulation-based methods where random numbers are used, such as VEGAS, ARTP, Pascal [refs]. Second, the computation is efficient. In our study of 2,370,689 SNPs and 24,120 genes, it takes around 0.5 hour on a standard PC (Intel Core i7 3.40GHz CPU, 8GB RAM), which is much faster than many simulation-based competitors [refs]. Third, the resultant P-values are of high precision. According to the formulation of fastCGP, the precision of each gene-level P-value is 1/K , where K is the total number of SNPs analyzed in a GWAS. The larger the amount of SNPs is analyzed, the higher is the precision. In our case of analyzing 2,370,689 SNPs, the precision reaches to 4.2 x 10-7.
 
-# Installation
 
-## Make sure all dependencies have been installed:
+## Installation: clone its repository and install it from source:
 
-* igraph (>= 1.0.0)
+`git clone https://github.com/CSOgroup/fastCGP.git`
 
-## Clone its repository and install it from source:
-
-`git clone https://github.com/CSOgroup/SigMod.git`
-
-`install.packages(path_to_SigMod, repos = NULL, type="source")` ## install from the cloned source file
+`install.packages(path_to_fastCGP, repos = NULL, type="source")` ## install from the cloned source file
 
 
 ## Usage
