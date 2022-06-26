@@ -1,4 +1,4 @@
-# fastCGP: an efficient and exact method to compute gene-level P-values from GWAS SNP-level results
+# fastCGP: an efficient and exact method to compute gene-level *P*-values from GWAS SNP-level results
 
 ## Introduction
 
