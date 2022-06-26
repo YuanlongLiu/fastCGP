@@ -64,8 +64,13 @@ results = fastCGP( snp2gene_file, snp_chr_pos_p_file, genes2compute_file )
 
 The results will be saved in ```results``` as a data frame, and will be saved in the ```computed_gene_p_values.tab``` file in your working directory.
 
+## Citation
+
+If you use CALDER in your work, please cite: https://www.nature.com/articles/s41598-017-01058-y
+
+
 ## Contact information
 
 * Author: Yuanlong LIU
 * Affiliation: French National Institute of Health and Medical Research, Unit 946,  Paris, France
-* Email: yuanlong.liu@inserm.fr
+* Email: yliueagle@gmail.com
