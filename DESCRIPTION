@@ -1,0 +1,18 @@
+Package: fastCGP
+Type: Package
+Title: fastCGP: an efficient and exact method to compute gene-level P-values from GWAS SNP-level results
+Version: 1.0
+Date: 2022-05-10
+Author: Yuanlong LIU
+Maintainer: Who to complain to <yliueagle@googlemail.com>
+Description: fastCGP is an efficient and exact method to compute gene-level P-values from GWAS SNP-level results
+Authors@R: c(
+    person(given = "Yuanlong",
+           family = "LIU",
+           role = c("aut", "cre"),
+           email = "yliueagle@googlemail.com"))
+URL: https://github.com/YuanlongLiu/fastCGP
+BugReports: https://github.com/YuanlongLiu/fastCGP/issues
+License: MIT
+Encoding: UTF-8
+RoxygenNote: 7.2.0
