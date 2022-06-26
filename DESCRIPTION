@@ -9,7 +9,6 @@ Description: fastCGP is an efficient and exact method to compute gene-level P-va
 Authors@R: c(
     person(given = "Yuanlong",
            family = "LIU",
-           role = c("aut", "cre"),
            email = "yliueagle@googlemail.com"))
 URL: https://github.com/YuanlongLiu/fastCGP
 BugReports: https://github.com/YuanlongLiu/fastCGP/issues
