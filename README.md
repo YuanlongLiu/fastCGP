@@ -70,7 +70,7 @@ The results will be saved in ```results``` as a data frame, and will be saved in
 
 ## Citation
 
-If you use CALDER in your work, please cite: https://www.nature.com/articles/s41598-017-01058-y
+If you use fastCGP in your work, please cite: https://www.nature.com/articles/s41598-017-01058-y
 
 
 ## Contact information
